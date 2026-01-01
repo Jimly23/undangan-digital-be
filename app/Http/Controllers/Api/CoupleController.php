@@ -13,6 +13,10 @@ class CoupleController extends Controller
 
     function simpan(Request $request) {
         $couple = new Couple();
+
+        $request->validate([
+            'musik' => 'required|file|mimes:mp3,wav,ogg|max:10240',
+        ]);
     
         // Upload image jika ada file yang diunggah, jika tidak tetap null
         $foto_mempelai = $request->hasFile('foto_mempelai') 
@@ -31,9 +35,12 @@ class CoupleController extends Controller
             ? url('/storage/' . $request->file('foto_mempelai_background')->store('images_couple', 'public'))
             : null;
     
-        $musik = $request->hasFile('musik') 
-            ? url('/storage/' . $request->file('musik')->store('audio', 'public'))
-            : null;
+        $musik = null;
+
+        if ($request->hasFile('musik')) {
+            $path = $request->file('musik')->store('audio', 'public');
+            $musik = url('/storage/' . $path);
+        }
     
         // Upload multiple images untuk galery, jika tidak ada maka tetap null
         $galery = [];
@@ -54,6 +61,7 @@ class CoupleController extends Controller
             'template' => $request->template,
             'slug' => $request->slug,
             'tipe' => $request->tipe,
+            'tipe_acara' => $request->tipe_acara,
             // pria
             'nama_lengkap_pria' => $request->nama_lengkap_pria,
             'nama_panggilan_pria' => $request->nama_panggilan_pria,

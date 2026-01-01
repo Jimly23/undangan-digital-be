@@ -14,6 +14,7 @@ class Couple extends Model
     protected $fillable = [
         'template',
         'tipe',
+        'tipe_acara',
         'slug',
         // pria
         'nama_lengkap_pria',

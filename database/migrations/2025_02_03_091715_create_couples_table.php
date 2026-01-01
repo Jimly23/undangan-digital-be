@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('template');
             // tipe
             $table->string('tipe');
+            // tipe acara
+            $table->string('tipe_acara');
             // slug
             $table->string('slug');
             // pria
