@@ -35,6 +35,7 @@ class Couple extends Model
         'tempat_akad',
         'jam_akad',
         'tanggal_resepsi',
+        'tanggal_resepsi_opsional',
         'tempat_resepsi',
         'jam_resepsi',
         // map

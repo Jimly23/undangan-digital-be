@@ -81,6 +81,7 @@ class CoupleController extends Controller
             'tempat_akad' => $request->tempat_akad,
             'jam_akad' => $request->jam_akad,
             'tanggal_resepsi' => $request->tanggal_resepsi,
+            'tanggal_resepsi_opsional' => $request->tanggal_resepsi_opsional,
             'tempat_resepsi' => $request->tempat_resepsi,
             'jam_resepsi' => $request->jam_resepsi,
             // map
