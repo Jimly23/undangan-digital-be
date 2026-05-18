@@ -14,37 +14,44 @@ class CoupleController extends Controller
     function simpan(Request $request) {
         $couple = new Couple();
 
+        // PERBAIKAN VALIDASI DI SINI
         $request->validate([
-            'musik' => 'required|file|mimes:mp3,wav,ogg|max:10240',
+            'musik' => [
+                'required',
+                'file',
+                'max:20480', // Naikkan ke 20MB jika file musik Anda berukuran besar
+                // Menampung semua variasi MIME type mp3, wav, dan ogg yang sering dikirim browser
+                'mimetypes:audio/mpeg,audio/mp3,audio/x-mp3,audio/x-mpeg,audio/x-mpeg-3,audio/mpeg3,audio/mpg,audio/x-mpg,audio/x-mpegaudio,audio/wav,audio/x-wav,audio/ogg,video/ogg'
+            ],
         ]);
-    
+
         // Upload image jika ada file yang diunggah, jika tidak tetap null
-        $foto_mempelai = $request->hasFile('foto_mempelai') 
+        $foto_mempelai = $request->hasFile('foto_mempelai')
             ? url('/storage/' . $request->file('foto_mempelai')->store('images_couple', 'public'))
             : null;
-    
-        $foto_mempelai_pria = $request->hasFile('foto_mempelai_pria') 
+
+        $foto_mempelai_pria = $request->hasFile('foto_mempelai_pria')
             ? url('/storage/' . $request->file('foto_mempelai_pria')->store('images_couple', 'public'))
             : null;
-    
-        $foto_mempelai_wanita = $request->hasFile('foto_mempelai_wanita') 
+
+        $foto_mempelai_wanita = $request->hasFile('foto_mempelai_wanita')
             ? url('/storage/' . $request->file('foto_mempelai_wanita')->store('images_couple', 'public'))
             : null;
-    
-        $foto_mempelai_background = $request->hasFile('foto_mempelai_background') 
+
+        $foto_mempelai_background = $request->hasFile('foto_mempelai_background')
             ? url('/storage/' . $request->file('foto_mempelai_background')->store('images_couple', 'public'))
             : null;
-    
+
         $musik = null;
 
         if ($request->hasFile('musik')) {
             $path = $request->file('musik')->store('audio', 'public');
             $musik = url('/storage/' . $path);
         }
-    
+
         // Upload multiple images untuk galery, jika tidak ada maka tetap null
         $galery = [];
-    
+
         if ($request->hasFile('galery')) {
             foreach ($request->file('galery') as $image) {
                 $path = $image->store('images_couple/' , 'public');
@@ -55,7 +62,7 @@ class CoupleController extends Controller
         // Ubah string hobi menjadi array
         $tamu = explode(',', $request->tamu); // Pecah berdasarkan koma
         $tamu = array_map('trim', $tamu); // Hilangkan spasi di awal & akhir
-    
+
         // Simpan ke database
         $couple = Couple::create([
             'template' => $request->template,
@@ -94,20 +101,20 @@ class CoupleController extends Controller
             'nama_bank_2' => $request->nama_bank_2,
             'nama_rekening_2' => $request->nama_rekening_2,
             // foto mempelai
-            'foto_mempelai' => $foto_mempelai, 
-            'foto_mempelai_pria' => $foto_mempelai_pria, 
-            'foto_mempelai_wanita' => $foto_mempelai_wanita, 
-            'foto_mempelai_background' => $foto_mempelai_background, 
+            'foto_mempelai' => $foto_mempelai,
+            'foto_mempelai_pria' => $foto_mempelai_pria,
+            'foto_mempelai_wanita' => $foto_mempelai_wanita,
+            'foto_mempelai_background' => $foto_mempelai_background,
             // love story tetap null jika tidak ada input
             'love_story' => $request->filled('love_story') ? $request->love_story : null,
-            'musik' => $musik, 
+            'musik' => $musik,
             // Jika galery kosong, tetap null
-            'galery' => !empty($galery) ? json_encode($galery) : null, 
+            'galery' => !empty($galery) ? json_encode($galery) : null,
             // Tamu
-            'tamu' => !empty($tamu) ? json_encode($tamu) : null, 
-            'pesan_chat' => $request->pesan_chat, 
+            'tamu' => !empty($tamu) ? json_encode($tamu) : null,
+            'pesan_chat' => $request->pesan_chat,
         ]);
-    
+
         return response()->json([
             'message' => 'Data berhasil disimpan',
             'data' => $couple
